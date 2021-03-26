@@ -89,6 +89,8 @@ int spl_board_init_f(void)
 		goto end;
 	}
 
+	pwm_device_init();
+
 	ret = spl_gemgxl_init();
 	if (ret) {
 		debug("Gigabit ethernet PHY (VSC8541) init failed: %d\n", ret);
