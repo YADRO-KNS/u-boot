@@ -38,6 +38,7 @@ void pwm_device_init(void)
 	struct pwm_sifive_regs *pwm0, *pwm1;
 	pwm0 = (struct pwm_sifive_regs *)PWM0_BASE;
 	pwm1 = (struct pwm_sifive_regs *)PWM1_BASE;
+#ifdef CONFIG_SPL_BUILD
 	writel(PWM_CMP_DISABLE_VAL, (void *)&pwm0->cmp0);
 	/* Set the 3-color PWM LEDs to yellow in SPL */
 	writel(PWM_CMP_ENABLE_VAL, (void *)&pwm0->cmp1);
@@ -56,6 +57,19 @@ void pwm_device_init(void)
 	writel(PWM_CMP_ENABLE_VAL, (void *)&pwm1->cmp2);
 	writel(PWM_CMP_ENABLE_VAL, (void *)&pwm1->cmp3);
 	writel(PWM_CFG_INIT, (void *)&pwm1->cfg);
+#else
+	/* Set the 3-color PWM LEDs to purple in U-boot */
+	writel(PWM_CMP_DISABLE_VAL, (void *)&pwm0->cmp1);
+	writel(PWM_CMP_ENABLE_VAL, (void *)&pwm0->cmp2);
+	writel(PWM_CMP_ENABLE_VAL, (void *)&pwm0->cmp3);
+#endif
+
+}
+
+int board_early_init_f(void)
+{
+	pwm_device_init();
+	return 0;
 }
 
 int board_init(void)
