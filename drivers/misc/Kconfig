@@ -404,6 +404,10 @@ config SYS_I2C_EEPROM_ADDR
 	hex "Chip address of the EEPROM device"
 	default 0
 
+config SYS_I2C_TMP451_ADDR
+	hex "Chip address of the TMP451 device"
+	default 0
+
 config SYS_I2C_EEPROM_BUS
 	int "I2C bus of the EEPROM device."
 	default 0
@@ -425,6 +429,12 @@ config SYS_EEPROM_PAGE_WRITE_DELAY_MS
 
 config SYS_I2C_EEPROM_ADDR_LEN
 	int "Length in bytes of the EEPROM memory array address"
+	default 1
+	help
+	  Note: This is NOT the chip address length!
+
+config SYS_I2C_TMP451_ADDR_LEN
+	int "Length in bytes of the TMP451 memory array address"
 	default 1
 	help
 	  Note: This is NOT the chip address length!

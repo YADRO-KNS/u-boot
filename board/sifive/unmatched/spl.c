@@ -10,6 +10,8 @@
 #include <spl.h>
 #include <misc.h>
 #include <log.h>
+#include <config.h>
+#include <i2c.h>
 #include <linux/delay.h>
 #include <linux/io.h>
 #include <asm/gpio.h>
@@ -24,6 +26,27 @@
 #define MODE_SELECT_REG		0x1000
 #define MODE_SELECT_SD		0xb
 #define MODE_SELECT_MASK	GENMASK(3, 0)
+
+#define TMP451_REMOTE_THERM_LIMIT_REG_OFFSET	0x19
+#define TMP451_RETMOE_THERM_LIMIT_INIT_VALUE	0x55
+
+static inline int init_tmp451_remote_therm_limit(void)
+{
+	struct udevice *dev;
+	unsigned char r_therm_limit = TMP451_RETMOE_THERM_LIMIT_INIT_VALUE;
+	int ret;
+
+	ret = i2c_get_chip_for_busnum(CONFIG_SYS_TMP451_BUS_NUM,
+				      CONFIG_SYS_I2C_TMP451_ADDR,
+				      CONFIG_SYS_I2C_TMP451_ADDR_LEN,
+				      &dev);
+
+	if (!ret)
+		ret = dm_i2c_write(dev, TMP451_REMOTE_THERM_LIMIT_REG_OFFSET,
+				   &r_therm_limit,
+				   sizeof(unsigned char));
+	return ret;
+}
 
 static inline int spl_reset_device_by_gpio(const char *label, int pin, int low_width)
 {
@@ -90,6 +113,12 @@ int spl_board_init_f(void)
 	}
 
 	pwm_device_init();
+
+	ret = init_tmp451_remote_therm_limit();
+	if (ret) {
+		debug("TMP451 remote THERM limit init failed: %d\n", ret);
+		goto end;
+	}
 
 	ret = spl_gemgxl_init();
 	if (ret) {
