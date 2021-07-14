@@ -73,6 +73,7 @@
 	"type_guid_gpt_loader2=" TYPE_GUID_LOADER2 "\0" \
 	"type_guid_gpt_system=" TYPE_GUID_SYSTEM "\0" \
 	"partitions=" PARTS_DEFAULT "\0" \
+	"fdtfile=" CONFIG_DEFAULT_FDT_FILE "\0" \
 	"setled_blue=mw.l 0x10020024 0x0000ffff; mw.l 0x10020028 0x0000ffff; mw.l 0x1002002c 0x0\0" \
 	BOOTENV \
 	"boot_extlinux="                                                  			\
